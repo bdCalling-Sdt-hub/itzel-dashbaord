@@ -5,7 +5,7 @@ import randomImg from "../../assets/randomProfile2.jpg";
 import { FaEye, FaTrash } from "react-icons/fa6";
 import moment from "moment";
 
-const Users = () => {
+const Creators = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [pageSize, setPageSize] = useState(10);
 
@@ -25,8 +25,8 @@ const Users = () => {
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/1.jpg",
           fine: 50,
-          eventParticipated: 3,
-          jobApplied: 2,
+          eventHosted: 3,
+          jobPosted: 2,
         },
         {
           id: "2",
@@ -39,8 +39,8 @@ const Users = () => {
           role: "User",
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/2.jpg",
-          eventParticipated: 1,
-          jobApplied: 1,
+          eventHosted: 1,
+          jobPosted: 1,
         },
         {
           id: "3",
@@ -54,8 +54,8 @@ const Users = () => {
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/3.jpg",
           fine: 30,
-          eventParticipated: 0,
-          jobApplied: 0,
+          eventHosted: 0,
+          jobPosted: 0,
         },
         {
           id: "4",
@@ -69,8 +69,8 @@ const Users = () => {
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/4.jpg",
           fine: 0,
-          eventParticipated: 2,
-          jobApplied: 2,
+          eventHosted: 2,
+          jobPosted: 2,
         },
         {
           id: "5",
@@ -83,8 +83,8 @@ const Users = () => {
           role: "User",
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/5.jpg",
-          eventParticipated: 1,
-          jobApplied: 1,
+          eventHosted: 1,
+          jobPosted: 1,
         },
         {
           id: "6",
@@ -98,8 +98,8 @@ const Users = () => {
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/6.jpg",
           fine: 40,
-          eventParticipated: 0,
-          jobApplied: 0,
+          eventHosted: 0,
+          jobPosted: 0,
         },
         {
           id: "7",
@@ -112,8 +112,8 @@ const Users = () => {
           role: "User",
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/7.jpg",
-          eventParticipated: 3,
-          jobApplied: 2,
+          eventHosted: 3,
+          jobPosted: 2,
         },
         {
           id: "8",
@@ -126,8 +126,8 @@ const Users = () => {
           role: "User",
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/8.jpg",
-          eventParticipated: 2,
-          jobApplied: 2,
+          eventHosted: 2,
+          jobPosted: 2,
         },
         {
           id: "9",
@@ -141,8 +141,8 @@ const Users = () => {
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/9.jpg",
           fine: 25,
-          eventParticipated: 0,
-          jobApplied: 0,
+          eventHosted: 0,
+          jobPosted: 0,
         },
         {
           id: "10",
@@ -155,8 +155,8 @@ const Users = () => {
           role: "User",
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/10.jpg",
-          eventParticipated: 3,
-          jobApplied: 2,
+          eventHosted: 3,
+          jobPosted: 2,
         },
         {
           id: "11",
@@ -169,8 +169,8 @@ const Users = () => {
           role: "User",
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/11.jpg",
-          eventParticipated: 1,
-          jobApplied: 1,
+          eventHosted: 1,
+          jobPosted: 1,
         },
         {
           id: "12",
@@ -183,8 +183,8 @@ const Users = () => {
           role: "User",
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/12.jpg",
-          eventParticipated: 0,
-          jobApplied: 0,
+          eventHosted: 0,
+          jobPosted: 0,
         },
         {
           id: "13",
@@ -197,8 +197,8 @@ const Users = () => {
           role: "User",
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/13.jpg",
-          eventParticipated: 3,
-          jobApplied: 2,
+          eventHosted: 3,
+          jobPosted: 2,
         },
         {
           id: "14",
@@ -212,8 +212,8 @@ const Users = () => {
           subscription: "Yearly",
           profileImg: "https://randomuser.me/api/portraits/women/14.jpg",
           fine: 35,
-          eventParticipated: 2,
-          jobApplied: 2,
+          eventHosted: 2,
+          jobPosted: 2,
         },
         {
           id: "15",
@@ -226,8 +226,8 @@ const Users = () => {
           role: "User",
           subscription: "Monthly",
           profileImg: "https://randomuser.me/api/portraits/men/15.jpg",
-          eventParticipated: 0,
-          jobApplied: 0,
+          eventHosted: 0,
+          jobPosted: 0,
         },
       ],
     },
@@ -277,16 +277,16 @@ const Users = () => {
       render: (date) => moment(date).format("DD MMM YYYY"),
     },
     {
-      title: "Job Applied",
-      dataIndex: "jobApplied",
+      title: "Job Posted",
+      dataIndex: "jobPosted",
       align: "center",
-      key: "jobApplied",
+      key: "jobPosted",
     },
     {
-      title: "Event Participated",
-      dataIndex: "eventParticipated",
+      title: "Event Hosted",
+      dataIndex: "eventHosted",
       align: "center",
-      key: "eventParticipated",
+      key: "eventHosted",
     },
     {
       title: "Role",
@@ -337,7 +337,7 @@ const Users = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold  my-5">Users</h1>
+      <h1 className="text-2xl font-semibold  my-5">Creators</h1>
       <Table
         columns={columns}
         dataSource={data}
@@ -349,4 +349,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Creators;
