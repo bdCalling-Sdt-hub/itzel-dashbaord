@@ -1,5 +1,6 @@
 import React from "react";
-import { Table } from "antd";
+import { Spin, Table } from "antd";
+import { useGetAllJobsQuery } from "../../redux/apiSlices/categorySlice";
 
 // Sample data
 const jobPostsData = [
@@ -61,21 +62,29 @@ const jobPostsData = [
 ];
 
 const JobPosts = () => {
+  const { data: allJobs, isLoading } = useGetAllJobsQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spin />
+      </div>
+    );
+  }
+
+  const jobPosts = allJobs?.data || [];
+  console.log(jobPosts);
+
   const columns = [
     {
-      title: "Applicant Name",
-      dataIndex: "applicantName",
-      key: "applicantName",
-    },
-    {
-      title: "Applied",
-      dataIndex: "applied",
-      key: "applied",
-    },
-    {
       title: "Job Post",
-      dataIndex: "jobPost",
-      key: "jobPost",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
+      title: "Type",
+      dataIndex: "jobType",
+      key: "jobType",
     },
     {
       title: "Company Name",
@@ -83,14 +92,9 @@ const JobPosts = () => {
       key: "companyName",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
-    },
-    {
-      title: "Job Type",
-      dataIndex: "jobType",
-      key: "jobType",
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
       title: "Salary",
@@ -98,16 +102,26 @@ const JobPosts = () => {
       key: "salary",
     },
     {
+      title: "Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text, record) => new Date(text).toLocaleDateString(),
+    },
+
+    {
       title: "Details",
-      dataIndex: "details",
-      key: "details",
+      dataIndex: "description",
+      key: "description",
+      render: (text, record) => (
+        <div className="line-clamp-1">{text?.slice(0, 30)}...</div>
+      ),
     },
   ];
 
   return (
     <div className="p-4 h-screen bg-white rounded shadow">
       <h1 className="font-bold text-xl my-5">Job Posts</h1>
-      <Table columns={columns} dataSource={jobPostsData} />
+      <Table columns={columns} dataSource={jobPosts} rowKey="_id" />
     </div>
   );
 };

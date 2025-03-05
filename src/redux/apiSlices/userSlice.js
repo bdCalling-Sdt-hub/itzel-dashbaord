@@ -14,15 +14,25 @@ const userSlice = api.injectEndpoints({
       query: () => {
         return {
           method: "GET",
-          url: "/user",
+          url: "user/all?role=USER",
         };
       },
     }),
-    vendors: builder.query({
+
+    getUserById: builder.query({
+      query: (id) => {
+        return {
+          method: "GET",
+          url: `user/${id}`,
+        };
+      },
+    }),
+
+    getAllCreators: builder.query({
       query: () => {
         return {
           method: "GET",
-          url: "/user?role=VENDOR",
+          url: "user/all?role=CREATOR",
         };
       },
     }),
@@ -40,6 +50,7 @@ const userSlice = api.injectEndpoints({
 export const {
   useAdminQuery,
   useUsersQuery,
-  useVendorsQuery,
+  useGetUserByIdQuery,
+  useGetAllCreatorsQuery,
   useUserByIdQuery,
 } = userSlice;

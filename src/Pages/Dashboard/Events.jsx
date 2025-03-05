@@ -1,5 +1,6 @@
 import React from "react";
-import { Table } from "antd";
+import { Spin, Table } from "antd";
+import { useGetAllEventsQuery } from "../../redux/apiSlices/categorySlice";
 
 // Sample data
 const eventsData = [
@@ -51,6 +52,19 @@ const eventsData = [
 ];
 
 const Events = () => {
+  const { data: events, isLoading } = useGetAllEventsQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spin />
+      </div>
+    );
+  }
+
+  const eventsData = events?.data || [];
+  console.log(eventsData);
+
   const columns = [
     {
       title: "Event Name",
@@ -87,7 +101,7 @@ const Events = () => {
   return (
     <div className="p-4 h-screen bg-white rounded shadow">
       <h1 className="font-bold text-xl my-5">Events</h1>
-      <Table columns={columns} dataSource={eventsData} />
+      <Table columns={columns} rowKey="_id" dataSource={eventsData} />
     </div>
   );
 };

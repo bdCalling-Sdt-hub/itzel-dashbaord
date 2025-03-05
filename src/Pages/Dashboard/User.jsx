@@ -1,30 +1,30 @@
 import React from "react";
-import { ConfigProvider, Input, Tabs } from "antd";
+import { ConfigProvider, Input, Spin, Tabs } from "antd";
 import { Link, useParams } from "react-router-dom";
 import { BiLeftArrowAlt } from "react-icons/bi";
 import RunningOrderTable from "../../components/ui/Analytics/RunningOrderTable";
+import { useGetUserByIdQuery } from "../../redux/apiSlices/userSlice";
+import { imageUrl } from "../../redux/api/baseApi";
+import moment from "moment";
 
 const User = () => {
   const { id } = useParams();
 
-  // Sample user data
-  const user = {
-    name: "John Doe",
-    id: "#5568164",
-    email: "johndoe@example.com",
-    address: {
-      street: "123 Main St",
-      city: "Los Angeles",
-      state: "CA",
-      zip: "90001",
-      country: "USA",
-    },
-    phone: "+1 (555) 123-4567",
-    imgUrl: "https://randomuser.me/api/portraits/men/1.jpg",
-  };
+  const { data: userData, isLoading } = useGetUserByIdQuery(id);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spin />
+      </div>
+    );
+  }
+
+  const user = userData?.data;
+  console.log(userData);
 
   const imgUrl =
-    user?.imgUrl ||
+    user?.profile ||
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmtj40PvvTQ1g64pgKZ2oKEk-tqT9rA4CXSA&s";
 
   return (
@@ -33,11 +33,7 @@ const User = () => {
         <div className="flex gap-3 items-center ">
           <img
             className="rounded-full w-16 h-16"
-            src={
-              imgUrl?.startsWith("http")
-                ? imgUrl
-                : `${import.meta.env.VITE_BASE_URL}${imgUrl}`
-            }
+            src={imgUrl?.startsWith("http") ? imgUrl : `${imageUrl}${imgUrl}`}
             alt="img"
           />
           <div>
@@ -62,31 +58,29 @@ const User = () => {
             <h1 className="font-semibold text-sm border-b-2 border-dashed">
               Phone
             </h1>
-            <p className="text-lg my-2">{user?.phone}</p>
+            <p className="text-lg my-2">{user?.contact}</p>
           </div>
           <div className="p-3 bg-white h-20 rounded-2xl shadow-sm">
             <h1 className="font-semibold text-sm border-b-2 border-dashed">
               Address
             </h1>
+            <p className="text-lg my-2">{user?.location}</p>
+          </div>
+          <div className="p-3 bg-white h-20 rounded-2xl shadow-sm">
+            <h1 className="font-semibold text-sm border-b-2 border-dashed">
+              Status
+            </h1>
+            <p className="text-lg my-2">{user?.status}</p>
+          </div>
+          <div className="p-3 bg-white h-20 rounded-2xl shadow-sm">
+            <h1 className="font-semibold text-sm border-b-2 border-dashed">
+              User Since
+            </h1>
             <p className="text-lg my-2">
-              {user?.address ? (
-                <>
-                  {user?.address?.street}, {user?.address?.state},{" "}
-                  {user?.address?.city}, {user?.address?.country}
-                </>
-              ) : (
-                "N/A"
-              )}
+              {moment(user?.createdAt).format("DD MMMM YYYY")}
             </p>
           </div>
         </div>
-      </div>
-      <div>
-        <RunningOrderTable
-          filterProps={
-            user?.vendor?.name || user?.admin?.name || user?.customer?.name
-          }
-        />
       </div>
     </div>
   );
