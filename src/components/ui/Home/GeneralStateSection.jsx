@@ -26,10 +26,18 @@ const GeneralStateSection = () => {
   const state = generalState?.data;
 
   return (
-    <div className="grid md:grid-cols-4 gap-6 md:h-[110px]">
+    <div className="grid md:grid-cols-5 gap-6 md:h-[110px]">
       <div className="bg-white border rounded-md py-0 px-6 flex items-center justify-center gap-4">
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total User</h2>
+          <h3 className="text-center text-4xl font-semibold">
+            {state?.totalActiveUsers}
+          </h3>
+        </div>
+      </div>
+      <div className="bg-white border rounded-md py-0 px-6 flex items-center justify-center gap-4">
+        <div className="flex flex-col items-center">
+          <h2 className="text-center text-2xl text-base">Total Creator</h2>
           <h3 className="text-center text-4xl font-semibold">
             {state?.totalActiveUsers}
           </h3>

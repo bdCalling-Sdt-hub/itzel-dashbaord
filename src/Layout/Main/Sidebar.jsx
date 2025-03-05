@@ -1,26 +1,19 @@
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import {
-  MdCancelPresentation,
-  MdCategory,
-  MdFeaturedPlayList,
-  MdMiscellaneousServices,
+  MdEvent,
+  MdOutlineCategory,
+  MdOutlineSubscriptions,
 } from "react-icons/md";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-
-import { TbUserScreen } from "react-icons/tb";
+import { CgProfile } from "react-icons/cg";
 import { IoIosLogOut } from "react-icons/io";
-import { IoSettingsOutline } from "react-icons/io5";
-
-import { PiUserPlus } from "react-icons/pi";
 import { LuLayoutDashboard } from "react-icons/lu";
 import Cookies from "js-cookie";
 import logo from "../../assets/sidebarLogo.png";
-import { DiGoogleAnalytics } from "react-icons/di";
-import { BiSolidCategoryAlt } from "react-icons/bi";
-import { FaMoneyBillTransfer, FaScissors } from "react-icons/fa6";
-import { FaBorderStyle } from "react-icons/fa";
+import { FaRegRectangleList, FaRegUser, FaUserTie } from "react-icons/fa6";
 import { SlSettings } from "react-icons/sl";
+import { BsFillAwardFill } from "react-icons/bs";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -50,37 +43,37 @@ const Sidebar = () => {
     },
     {
       key: "/users",
-      icon: <TbUserScreen size={24} />,
+      icon: <FaRegUser size={24} />,
       label: <Link to="/users">Users</Link>,
     },
     {
       key: "/creators",
-      icon: <TbUserScreen size={24} />,
+      icon: <FaUserTie size={24} />,
       label: <Link to="/creators">Creators</Link>,
     },
     {
       key: "/subscriptions",
-      icon: <TbUserScreen size={24} />,
+      icon: <MdOutlineSubscriptions size={24} />,
       label: <Link to="/subscriptions">Subscription</Link>,
     },
     {
       key: "/category",
-      icon: <TbUserScreen size={24} />,
+      icon: <MdOutlineCategory size={24} />,
       label: <Link to="/category">Category</Link>,
     },
     {
       key: "/events",
-      icon: <TbUserScreen size={24} />,
+      icon: <MdEvent size={24} />,
       label: <Link to="/events">Events</Link>,
     },
     {
       key: "/job-post",
-      icon: <TbUserScreen size={24} />,
+      icon: <FaRegRectangleList size={24} />,
       label: <Link to="/job-post">Job Post</Link>,
     },
     {
       key: "/personal-information",
-      icon: <SlSettings size={24} />,
+      icon: <CgProfile size={24} />,
       label: (
         <Link
           to="/personal-information"
@@ -101,7 +94,7 @@ const Sidebar = () => {
     },
     {
       key: "/terms-and-condition",
-      icon: <SlSettings size={24} />,
+      icon: <BsFillAwardFill size={24} />,
       label: (
         <Link to="/terms-and-condition" className="text-white hover:text-white">
           Terms And Condition

@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import backgroundImage from "../../assets/salonGoLoginBg.png";
+import backgroundImage from "../../assets/istockphoto-1353577301-612x612.jpg";
 
 const Auth = () => {
   return (
@@ -16,7 +16,7 @@ const Auth = () => {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
-          opacity: 0.2,
+          opacity: 0.9,
           position: "absolute",
           top: 0,
           left: 0,
