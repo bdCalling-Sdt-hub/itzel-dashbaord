@@ -5,6 +5,7 @@ import { FaRegBell } from "react-icons/fa6";
 import { Badge } from "antd";
 import logo from "../../assets/randomProfile2.jpg";
 import { useFetchAdminProfileQuery } from "../../redux/apiSlices/authSlice";
+import { imageUrl } from "../../redux/api/baseApi";
 
 const Header = () => {
   const { data: userData, isLoading } = useFetchAdminProfileQuery();
@@ -33,12 +34,12 @@ const Header = () => {
             height: 45,
           }}
           src={
-            userData?.data?.profileImg
-              ? `${import.meta.env.VITE_BASE_URL}${userData?.data?.profileImg}`
+            userData?.data?.profile
+              ? `${imageUrl}${userData?.data?.profile}`
               : logo
           }
           alt="person-male--v2"
-          className="clip"
+          className="clip object-cover"
         />
         <div className="flex pr-2 flex-col">
           <p className="text-xl">{userData?.data?.name || "Shakib Al Hasan"}</p>

@@ -1,161 +1,223 @@
 import React, { useState } from "react";
-import { Card, Modal, Input, Button } from "antd";
-import { FaPlus } from "react-icons/fa6";
+import { Button, Card, Skeleton, Modal, Input, Form, message } from "antd";
+import {
+  useCreatePackageMutation,
+  useDeletePackageMutation,
+  useGetPackagesQuery,
+  useUpdatePackageMutation,
+} from "../../redux/apiSlices/subscribeSlice";
+import { MdClose } from "react-icons/md";
+import toast from "react-hot-toast";
 
-const PricingCards = () => {
-  const [pricingPlans, setPricingPlans] = useState([
-    {
-      id: 1,
-      name: "Basic",
-      allowedJobPost: 37,
-      allowedEventPost: 90,
-      features: ["Nothing"],
-      price: 10,
-    },
-    {
-      id: 2,
-      name: "Standard",
-      allowedJobPost: 50,
-      allowedEventPost: 120,
-      features: ["Free Setup", "Bandwidth Limit 10 GB"],
-      price: 20,
-    },
-    {
-      id: 3,
-      name: "Premium",
-      allowedJobPost: 100,
-      allowedEventPost: 200,
-      features: ["Free Setup", "Unlimited Bandwidth", "Priority Support"],
-      price: 50,
-    },
-  ]);
+const PricingCard = () => {
+  const { data: packages, isLoading, refetch } = useGetPackagesQuery();
+  const [addPackage] = useCreatePackageMutation();
+  const [updatePack] = useUpdatePackageMutation();
+  const [deletePack] = useDeletePackageMutation();
 
+  const packageList = packages?.data || [];
+
+  // State for Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newPlan, setNewPlan] = useState({
-    name: "",
-    allowedJobPost: "",
-    allowedEventPost: "",
-    features: "",
-    price: "",
-  });
+  const [editingPackage, setEditingPackage] = useState(null);
+  const [form] = Form.useForm();
 
-  // Handle adding a new plan
-  const handleAddPlan = () => {
-    // Validate inputs
-    if (
-      !newPlan.name ||
-      !newPlan.allowedJobPost ||
-      !newPlan.allowedEventPost ||
-      !newPlan.features ||
-      !newPlan.price
-    ) {
-      alert("Please fill in all fields");
-      return;
-    }
+  // Open modal for add/edit
+  const openModal = (pkg = null) => {
+    setEditingPackage(pkg);
+    setIsModalOpen(true);
+    form.setFieldsValue(
+      pkg || {
+        name: "",
+        price: "",
+        allowedJobPost: "",
+        allowedEventPost: "",
+        features: "",
+      }
+    );
+  };
 
-    // Add the new plan to the list
-    setPricingPlans([
-      ...pricingPlans,
-      {
-        ...newPlan,
-        id: pricingPlans.length + 1,
-        allowedJobPost: parseInt(newPlan.allowedJobPost, 10),
-        allowedEventPost: parseInt(newPlan.allowedEventPost, 10),
-        price: parseFloat(newPlan.price),
-        features: newPlan.features.split(",").map((feature) => feature.trim()),
-      },
-    ]);
-
-    // Close the modal and reset the form
+  // Close Modal
+  const closeModal = () => {
     setIsModalOpen(false);
-    setNewPlan({
-      name: "",
-      allowedJobPost: "",
-      allowedEventPost: "",
-      features: "",
-      price: "",
-    });
+    setEditingPackage(null);
+    form.resetFields();
+  };
+
+  // Handle form submission
+  const handleSubmit = async (values) => {
+    try {
+      const formattedValues = {
+        ...values,
+        price: Number(values.price),
+        allowedJobPost: Number(values.allowedJobPost),
+        allowedEventPost: Number(values.allowedEventPost),
+        features: values.features
+          ? values.features.split(",").map((f) => f.trim())
+          : [],
+      };
+
+      if (editingPackage) {
+        console.log("Updating package with data:", formattedValues);
+
+        const response = await updatePack({
+          id: editingPackage._id, // Ensure `_id` exists
+          ...formattedValues,
+        }).unwrap();
+
+        console.log("Update success:", response);
+        message.success("Package updated successfully!");
+      } else {
+        const response = await addPackage(formattedValues).unwrap();
+        console.log("Add success:", response);
+        message.success("New package added successfully!");
+      }
+
+      refetch();
+      closeModal();
+    } catch (error) {
+      console.error("Error updating package:", error);
+      message.error("Something went wrong. Please try again.");
+    }
   };
 
   return (
-    <div className="flex flex-col h-screen items-center gap-6 p-6 bg-white">
-      <div className="w-full flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Subscription</h1>
+    <div>
+      <div className="flex justify-between items-center bg-gray-100 p-5">
+        <h1 className="text-3xl font-bold">Subscription Packages</h1>
         <Button
-          type="primary"
-          onClick={() => setIsModalOpen(true)}
-          className="mb-4 py-5 px-6 rounded-lg"
+          className="bg-primary text-white py-2 px-5 rounded-md"
+          onClick={() => openModal()}
         >
-          <FaPlus /> Add Package
+          Add Package
         </Button>
       </div>
-      <div className="flex justify-center gap-6 flex-wrap">
-        {pricingPlans.map((plan) => (
-          <Card
-            key={plan.id}
-            className="w-80 p-6 text-center shadow-lg rounded-xl bg-white"
-          >
-            <h2 className="text-xl font-semibold">{plan.name}</h2>
-            <p className="text-gray-500">Monthly Charge</p>
-            <h3 className="text-3xl font-bold text-blue-600">${plan.price}</h3>
-            <div className="my-4 text-gray-600">
-              <p>Allowed Job Posts: {plan.allowedJobPost}</p>
-              <p>Allowed Event Posts: {plan.allowedEventPost}</p>
-              <p>Features:</p>
-              <ul className="list-disc pl-6">
-                {plan.features.map((feature, index) => (
-                  <li key={index}>{feature}</li>
-                ))}
-              </ul>
-            </div>
-            <button className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">
-              Edit Details
-            </button>
-          </Card>
-        ))}
+
+      <div className="flex justify-center items-center bg-gray-100 p-5">
+        {isLoading ? (
+          <Skeleton active />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {packageList.map((pkg) => (
+              <Card
+                key={pkg._id}
+                className="w-80 p-6 shadow-lg rounded-2xl border border-gray-200 bg-white relative"
+              >
+                <button
+                  className="absolute top-2 right-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded-full"
+                  onClick={() => {
+                    Modal.confirm({
+                      title: "Are you sure to delete this package?",
+                      okText: "Yes",
+                      cancelText: "No",
+                      onOk: async () => {
+                        await deletePack(pkg._id).unwrap();
+                        toast.success("Package deleted successfully");
+                        refetch();
+                      },
+                    });
+                  }}
+                >
+                  <MdClose />
+                </button>
+                <h2 className="text-lg font-semibold text-gray-800 text-center">
+                  {pkg.name}
+                </h2>
+                <h3 className="text-3xl font-bold text-blue-500 text-center mt-2">
+                  ${pkg.price}
+                </h3>
+                <div className="text-gray-600 text-center mt-4 space-y-1">
+                  <p className="text-lg">
+                    Allowed Job Post:{" "}
+                    <span className="text-blue-500 font-bold">
+                      {pkg.allowedJobPost}
+                    </span>
+                  </p>
+                  <p className="text-lg">
+                    Allowed Event Post:{" "}
+                    <span className="text-blue-500 font-bold">
+                      {pkg.allowedEventPost}
+                    </span>
+                  </p>
+                </div>
+                <h1 className="text-lg font-semibold text-gray-800 text-center mt-4">
+                  Features:
+                </h1>
+                <ul className="text-gray-600 text-center mt-4 space-y-1">
+                  {pkg.features.length > 0 ? (
+                    pkg.features.map((feature, i) => <li key={i}>{feature}</li>)
+                  ) : (
+                    <li>No features listed</li>
+                  )}
+                </ul>
+                <button
+                  className="w-full bg-blue-500 text-white font-medium py-2 rounded-lg mt-5 hover:bg-blue-600 transition"
+                  onClick={() => openModal(pkg)}
+                >
+                  Edit Package
+                </button>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
+
+      {/* Add/Edit Package Modal */}
       <Modal
-        title="Add New Package"
+        title={editingPackage ? "Edit Package" : "Add Package"}
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        onOk={handleAddPlan}
+        onCancel={closeModal}
+        footer={null}
       >
-        <Input
-          placeholder="Name"
-          value={newPlan.name}
-          onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
-          className="mb-2"
-        />
-        <Input
-          placeholder="Allowed Job Posts"
-          value={newPlan.allowedJobPost}
-          onChange={(e) =>
-            setNewPlan({ ...newPlan, allowedJobPost: e.target.value })
-          }
-          className="mb-2"
-        />
-        <Input
-          placeholder="Allowed Event Posts"
-          value={newPlan.allowedEventPost}
-          onChange={(e) =>
-            setNewPlan({ ...newPlan, allowedEventPost: e.target.value })
-          }
-          className="mb-2"
-        />
-        <Input
-          placeholder="Features (comma separated)"
-          value={newPlan.features}
-          onChange={(e) => setNewPlan({ ...newPlan, features: e.target.value })}
-          className="mb-2"
-        />
-        <Input
-          placeholder="Price"
-          value={newPlan.price}
-          onChange={(e) => setNewPlan({ ...newPlan, price: e.target.value })}
-        />
+        <Form layout="vertical" form={form} onFinish={handleSubmit}>
+          <Form.Item
+            label="Package Name"
+            name="name"
+            rules={[{ required: true, message: "Please enter package name" }]}
+          >
+            <Input placeholder="Enter package name" />
+          </Form.Item>
+
+          <Form.Item
+            label="Price ($)"
+            name="price"
+            rules={[{ required: true, message: "Please enter price" }]}
+          >
+            <Input type="number" placeholder="Enter price" />
+          </Form.Item>
+
+          <Form.Item
+            label="Allowed Job Posts"
+            name="allowedJobPost"
+            rules={[{ required: true, message: "Please enter job post limit" }]}
+          >
+            <Input type="number" placeholder="Enter job post limit" />
+          </Form.Item>
+
+          <Form.Item
+            label="Allowed Event Posts"
+            name="allowedEventPost"
+            rules={[
+              { required: true, message: "Please enter event post limit" },
+            ]}
+          >
+            <Input type="number" placeholder="Enter event post limit" />
+          </Form.Item>
+
+          <Form.Item label="Features (comma separated)" name="features">
+            <Input placeholder="Enter features (e.g. Unlimited Access, Support)" />
+          </Form.Item>
+
+          <div className="flex justify-end gap-3">
+            <Button onClick={closeModal}>Cancel</Button>
+            <Button type="primary" htmlType="submit">
+              {editingPackage ? "Update Package" : "Add Package"}
+            </Button>
+          </div>
+        </Form>
       </Modal>
     </div>
   );
 };
 
-export default PricingCards;
+export default PricingCard;

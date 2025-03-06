@@ -18,15 +18,16 @@ import Subscription from "../Pages/Dashboard/Subscription";
 import Category from "../Pages/Dashboard/Category";
 import Events from "../Pages/Dashboard/Events";
 import JobPosts from "../Pages/Dashboard/JobPosts";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
     // element: <ProtectedRoute><Main /></ProtectedRoute> ,
     element: (
-      // <PrivateRoute>
-      <Main />
-      // </PrivateRoute>
+      <PrivateRoute>
+        <Main />
+      </PrivateRoute>
     ),
     children: [
       {
