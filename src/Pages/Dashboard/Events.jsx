@@ -1,6 +1,8 @@
 import React from "react";
-import { Spin, Table } from "antd";
+import { Spin, Table, Tag } from "antd";
 import { useGetAllEventsQuery } from "../../redux/apiSlices/categorySlice";
+import moment from "moment/moment";
+import { imageUrl } from "../../redux/api/baseApi";
 
 // Sample data
 const eventsData = [
@@ -67,34 +69,61 @@ const Events = () => {
 
   const columns = [
     {
-      title: "Event Name",
-      dataIndex: "eventName",
-      key: "eventName",
+      title: "Thumbnail",
+      dataIndex: "thumbnail",
+      key: "thumbnail",
+      render: (text, record) => (
+        <img
+          src={
+            record?.thumbnailImage?.startsWith("http")
+              ? record?.thumbnailImage
+              : `${imageUrl}/${record?.thumbnailImage}`
+          }
+          alt={record.eventName}
+          className="rounded w-32 h-20 object-cover"
+        />
+      ),
     },
     {
-      title: "Name",
+      title: "Event Name",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
+      title: "Creator Name",
+      dataIndex: ["creator", "name"],
+      key: "name",
     },
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date",
+      title: "Tags",
+      dataIndex: "tags",
+      key: "tags",
+      render: (text, record) => (
+        <span>
+          {record?.tags?.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </span>
+      ),
     },
     {
-      title: "Invoice",
-      dataIndex: "invoice",
-      key: "invoice",
+      title: "Location",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+      render: (text, record) => <span>${text}</span>,
+    },
+    {
+      title: "Time & Date",
+      dataIndex: "time",
+      key: "time",
+      render: (text, record) => (
+        <span>{moment(text).format("MMM Do YYYY, h:mm A")}</span>
+      ),
     },
   ];
 

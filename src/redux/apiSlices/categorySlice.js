@@ -21,6 +21,25 @@ const categorySlice = api.injectEndpoints({
       },
     }),
 
+    deleteCategory: builder.mutation({
+      query: (id) => {
+        return {
+          method: "DELETE",
+          url: `/category/${id}`,
+        };
+      },
+    }),
+
+    updateCategory: builder.mutation({
+      query: ({ data, id }) => {
+        return {
+          method: "PUT",
+          url: `/category/${id}`,
+          body: data,
+        };
+      },
+    }),
+
     //event
 
     getAllEvents: builder.query({
@@ -48,6 +67,9 @@ const categorySlice = api.injectEndpoints({
 export const {
   useGetAllCategoriesQuery,
   useCreateCategoryMutation,
+  useDeleteCategoryMutation,
+  useUpdateCategoryMutation,
+
   useGetAllEventsQuery,
   useGetAllJobsQuery,
 } = categorySlice;

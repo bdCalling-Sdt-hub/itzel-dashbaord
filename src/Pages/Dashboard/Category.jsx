@@ -1,22 +1,30 @@
 import React, { useState } from "react";
 import { Button, Input, Modal, Skeleton, Upload, message } from "antd";
-import { FaPlus } from "react-icons/fa6";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { FaCross, FaPlus, FaTrash } from "react-icons/fa6";
+import logo from "../../assets/logo.png";
 import {
   useCreateCategoryMutation,
+  useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
 } from "../../redux/apiSlices/categorySlice";
 import { imageUrl } from "../../redux/api/baseApi";
+import { MdCancel, MdOutlineAddPhotoAlternate } from "react-icons/md";
 
 const Category = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newCategory, setNewCategory] = useState({ name: "", image: "" });
+  const [newCategory, setNewCategory] = useState({
+    name: "",
+    image: null,
+    previewImage: null, // To store the preview URL of the uploaded image
+  });
+  const [imgURL, setImgURL] = useState("");
+  const [file, setFile] = useState(null);
 
   const { data: categories, isLoading, refetch } = useGetAllCategoriesQuery();
   const [createCategory] = useCreateCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const categoryData = categories?.data || [];
-  console.log(categoryData);
 
   // Open modal
   const showModal = () => {
@@ -26,7 +34,8 @@ const Category = () => {
   // Close modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setNewCategory({ name: "", image: "" }); // Reset form
+    setNewCategory({ name: "", image: null, previewImage: null }); // Reset form
+    setImgURL(""); // Reset image preview
   };
 
   // Handle input changes
@@ -35,14 +44,18 @@ const Category = () => {
     setNewCategory((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image upload
-  const handleUpload = (info) => {
-    if (info.file.status === "done") {
-      const imageUrl = URL.createObjectURL(info.file.originFileObj);
-      setNewCategory((prev) => ({ ...prev, image: info.file.originFileObj })); // Store the file object
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
+  // Handle image upload and preview
+  const onChangeImage = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const imgUrl = URL.createObjectURL(selectedFile);
+      setImgURL(imgUrl);
+      setFile(selectedFile);
+      setNewCategory((prev) => ({
+        ...prev,
+        image: selectedFile,
+        previewImage: imgUrl,
+      }));
     }
   };
 
@@ -75,6 +88,17 @@ const Category = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteCategory(id).unwrap();
+      message.success("Category deleted successfully");
+      refetch();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      message.error("Failed to delete category. Please try again.");
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen p-6">
       <div className="flex items-center justify-between my-10">
@@ -93,8 +117,14 @@ const Category = () => {
           {categoryData.map((item, index) => (
             <div
               key={index}
-              className="flex flex-col cursor-pointer rounded-xl items-center gap-3 bg-white p-4"
+              className="flex flex-col cursor-pointer rounded-xl items-center gap-3 bg-white p-4 relative"
             >
+              <button
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full"
+                onClick={() => handleDelete(item._id)}
+              >
+                <MdCancel size={24} />
+              </button>
               <img
                 className="w-[250px] h-[220px] rounded-xl object-cover"
                 src={
@@ -110,12 +140,14 @@ const Category = () => {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Add Category Modal */}
       <Modal
         title="Add Category"
         open={isModalOpen}
-        onCancel={handleCloseModal}
         onOk={handleAddCategory}
+        onCancel={handleCloseModal}
+        okText="Add"
+        cancelText="Cancel"
       >
         <div className="flex flex-col gap-4">
           <Input
@@ -124,26 +156,29 @@ const Category = () => {
             value={newCategory.name}
             onChange={handleInputChange}
           />
-          <Upload
-            name="image"
-            listType="picture-card"
-            className="avatar-uploader"
-            showUploadList={false}
-            beforeUpload={handleUpload}
-          >
-            {newCategory.image ? (
+          <div className="flex items-center gap-4">
+            <label
+              htmlFor="image-upload"
+              className="cursor-pointer flex items-center gap-2"
+            >
+              <MdOutlineAddPhotoAlternate className="text-2xl" />
+              <span>Upload Image</span>
+            </label>
+            <input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={onChangeImage}
+            />
+            {newCategory.previewImage && (
               <img
-                src={URL.createObjectURL(newCategory.image)}
-                alt="avatar"
-                style={{ width: "100%" }}
+                src={newCategory.previewImage}
+                alt="Preview"
+                className="w-20 h-20 object-cover rounded-lg"
               />
-            ) : (
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
             )}
-          </Upload>
+          </div>
         </div>
       </Modal>
     </div>
