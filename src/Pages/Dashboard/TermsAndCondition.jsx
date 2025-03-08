@@ -7,47 +7,49 @@ import {
 } from "../../redux/apiSlices/termsAndConditionSlice";
 import toast from "react-hot-toast";
 import rentMeLogo from "../../assets/navLogo.png";
+import { Spin } from "antd";
 
 const TermsAndCondition = () => {
   const editor = useRef(null);
   const [content, setContent] = useState("");
   const [selectedTab, setSelectedTab] = useState("USER");
-  const isLoading = false;
 
   useEffect(() => {
     setContent(content);
   }, [selectedTab]);
 
-  // const {
-  //   data: termsAndCondition,
-  //   isLoading,
-  //   refetch,
-  // } = useTermsAndConditionQuery(selectedTab);
+  const {
+    data: termsAndCondition,
+    isLoading,
+    refetch,
+  } = useTermsAndConditionQuery(selectedTab);
 
-  // const [updateTermsAndConditions] = useUpdateTermsAndConditionsMutation();
-
-  const termsAndCondition = [];
+  const [updateTermsAndConditions] = useUpdateTermsAndConditionsMutation();
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <img src={rentMeLogo} alt="" />
+        <Spin />
       </div>
     );
   }
 
-  const termsAndConditionData = termsAndCondition?.content;
+  const termsAndConditionData = termsAndCondition[0]?.description;
+  console.log(termsAndConditionData);
 
   const termsDataSave = async () => {
     const data = {
-      content: content,
+      description: content,
     };
 
     try {
-      const res = await updateTermsAndConditions(data).unwrap();
+      const res = await updateTermsAndConditions({
+        id: termsAndCondition[0]?._id,
+        data,
+      }).unwrap();
       if (res.success) {
         toast.success("Terms and Conditions updated successfully");
-        setContent(res.data.content);
+        setContent(res?.data?.description);
         refetch();
       } else {
         toast.error("Something went wrong");

@@ -10,6 +10,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useUserStatesQuery } from "../../../redux/apiSlices/dashboardSlice";
+import { Spin } from "antd";
 
 const data = [
   {
@@ -87,6 +89,19 @@ const data = [
 ];
 
 const UserEngagement = () => {
+  const { data: userStates, isLoading } = useUserStatesQuery();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Spin />
+      </div>
+    );
+  }
+
+  const userState = userStates?.data;
+  console.log(userState);
+
   return (
     <div className="bg-white border rounded-2xl p-4">
       <h1 className="font-bold text-xl mb-5">User Engagement</h1>
@@ -95,7 +110,7 @@ const UserEngagement = () => {
           <BarChart
             width={500}
             height={300}
-            data={data}
+            data={userState}
             margin={{
               top: 5,
               right: 30,
@@ -109,13 +124,13 @@ const UserEngagement = () => {
             <Tooltip />
             <Legend />
             <Bar
-              dataKey="pv"
+              dataKey="totalCreator"
               radius={[20, 20, 0, 0]}
               barSize={30}
               fill="#236e9e"
             />
             <Bar
-              dataKey="uv"
+              dataKey="totalUsers"
               radius={[20, 20, 0, 0]}
               barSize={30}
               fill="#9fa9c0"

@@ -1,29 +1,20 @@
-import { FaUsers } from "react-icons/fa6";
-import salongoLogo from "../../../assets/salon-go-logo.png";
+import { Spin } from "antd";
+import { useGeneralStatsQuery } from "../../../redux/apiSlices/dashboardSlice";
 
 const GeneralStateSection = () => {
-  // Simulated dummy data
-  const generalState = {
-    data: {
-      totalActiveUsers: 1500,
-      newSignups: 120,
-      totalActiveVendors: 45,
-      totalCompletedOrders: 320,
-      totalServices: 75,
-    },
-  };
-
-  const isLoading = false; // Simulated loading state
+  const { data: generalStateData, isLoading } = useGeneralStatsQuery();
 
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <img src={salongoLogo} alt="" />
+        <Spin />
       </div>
     );
   }
 
-  const state = generalState?.data;
+  const state = generalStateData?.data;
+
+  // console.log(state);
 
   return (
     <div className="grid md:grid-cols-5 gap-6 md:h-[110px]">
@@ -31,7 +22,7 @@ const GeneralStateSection = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total User</h2>
           <h3 className="text-center text-4xl font-semibold">
-            {state?.totalActiveUsers}
+            {state?.totalUsers}
           </h3>
         </div>
       </div>
@@ -39,7 +30,7 @@ const GeneralStateSection = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total Creator</h2>
           <h3 className="text-center text-4xl font-semibold">
-            {state?.totalActiveUsers}
+            {state?.totalCreator}
           </h3>
         </div>
       </div>
@@ -47,7 +38,7 @@ const GeneralStateSection = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total Event</h2>
           <h3 className="text-center text-4xl font-semibold">
-            {state?.newSignups}
+            {state?.totalEvent}
           </h3>
         </div>
       </div>
@@ -55,7 +46,7 @@ const GeneralStateSection = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total Job Post</h2>
           <h3 className="text-center text-4xl font-semibold">
-            {state?.totalActiveVendors}
+            {state?.totalJobs}
           </h3>
         </div>
       </div>
@@ -63,7 +54,7 @@ const GeneralStateSection = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-center text-2xl text-base">Total Earning</h2>
           <h3 className="text-center text-4xl font-semibold">
-            {state?.totalCompletedOrders}
+            ${state?.totalEarning}
           </h3>
         </div>
       </div>
